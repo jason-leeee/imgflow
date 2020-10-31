@@ -24,6 +24,9 @@ dist/
 # Jupyter Notebook
 .ipynb_checkpoints/
 
+# VSCode
+.vscode/
+
 # Unit test reports
 TEST*.xml
 
