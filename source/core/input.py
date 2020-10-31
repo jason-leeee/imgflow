@@ -28,7 +28,7 @@ class ImgLoadFromDir(ImgPlaceholder):
         for imgfile in os.listdir(input_dir):
             if os.path.splitext(imgfile)[-1].lower() in image_format:
                 imgpath = os.path.join(input_dir, imgfile)
-                img = ImgElement(PIL.Image.open(imgpath))
+                img = ImgElement(PIL.Image.open(imgpath), imgpath)
                 collection.append(img)
         return collection
 

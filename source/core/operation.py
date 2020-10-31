@@ -15,7 +15,7 @@ class ImgTransformOp(ImgOperationBase):
     def execute(self):
         if not (self.op_ex and self.op_func and self.op_params):
             raise ValueError("operation is not defined")
-        return self.op_func(self.ex.execute(), *self.op_params[0], **self.op_params[1])
+        return self.op_func(self.op_ex.execute(), *self.op_params[0], **self.op_params[1])
     
 
 class ImgInputOp(ImgOperationBase):
