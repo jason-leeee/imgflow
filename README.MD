@@ -4,7 +4,6 @@
 
 A handy data preprocessing pipeline.
 
-
 ## Mock-up
 
 ```python

@@ -1,10 +1,11 @@
 import os
+
 import PIL.Image
 
-from operation import ImgOperation
+from .operation import ImgTransformOp
 
 
-class ImgTransformBase(ImgOperation):
+class ImgTransformBase(ImgTransformOp):
     def __init__(self):
         super(ImgTransformBase, self).__init__()
 

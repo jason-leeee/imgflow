@@ -21,6 +21,12 @@ class ImgCollection(ImgCollectionBase):
         super(ImgCollection, self).__init__()
         self.collection = []
 
+    def __repr__(self):
+        return f"{self.__class__.__name__} contains {self.__len__()} images"
+
+    def __str__(self):
+        return f"{self.__class__.__name__} contains {self.__len__()} images"
+
     def __len__(self):
         return len(self.collection)
 
