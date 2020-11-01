@@ -1,5 +1,7 @@
 import os
+import cv2
 import PIL.Image
+import numpy as np
 
 
 class ImgElement:
@@ -13,6 +15,17 @@ class ImgElement:
 
     def __str__(self):
         return self.imgpath
+
+    @classmethod
+    def fromFile(cls, imgpath):
+        img = cv2.imread(imgpath)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        return cls(img, imgpath)
+
+    @classmethod
+    def fromPILImage(cls, imgpil):
+        img = np.array(imgpil)
+        return cls(img, "")
 
 
 class ImgCollectionBase:
@@ -50,12 +63,26 @@ class ImgCollection(ImgCollectionBase):
         return len(self.collection)
 
     def __getitem__(self, idx):
+        if isinstance(idx, slice):
+            return self.collection[idx.start:idx.stop:idx.step]
         return self.collection[idx]
 
+    # TODO: does this also need slice?
     def __setitem__(self, idx, elem):
         self.collection[idx] = elem
 
-    # TODO: implement __iter__ and __next__
+    # FIXME: is this the standard/best way to implement the iterator?
+    def __iter__(self):
+        self.iter_idx = 0
+        return self
+
+    def __next__(self):
+        if self.iter_idx < len(self.collection):
+            x = self.collection[self.iter_idx]
+            self.iter_idx += 1
+            return x
+        else:
+            raise StopIteration
 
     def append(self, elem):
         self.collection.append(elem)

@@ -33,6 +33,8 @@ for subset in subsets:
     
 - [ ] Convert ImgFlow into Cloud Dataflow and run in parallel.
 
+- [ ] Global config.py.
+
 ### Data loading
     
 - [ ] Multiple data source, e.g. local directory, cloud storage bucket.

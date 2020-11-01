@@ -13,16 +13,13 @@ class ImgTransformBase(ImgTransformOp):
 class ImgTransformResize(ImgTransformBase):
     def __init__(self, *args, **kwargs):
         super(ImgTransformResize, self).__init__()
-        self.op_func = self.resize
+        self.op_func = self.process
         self.op_params = (args, kwargs)
 
-    def __call__(self, ex):
-        self.op_ex = ex
-        return self
-
-    def resize(self, collection, width, height):
-        #for img in collection:
-        #    pass
+    def process(self, collection, width, height):
+        # TODO: visitor pattern?
+        for img in collection:
+            print(img)
         return collection
         
 

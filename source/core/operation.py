@@ -5,12 +5,19 @@ class ImgOperationBase:
         self.op_params = ()
 
     def execute(self):
-        raise NotImplementedError()
+        raise NotImplementedError
+
+    def process(self, *args, **kwargs):
+        raise NotImplementedError
 
 
 class ImgTransformOp(ImgOperationBase):
     def __init__(self):
         super(ImgTransformOp, self).__init__()
+
+    def __call__(self, ex):
+        self.op_ex = ex
+        return self
 
     def execute(self):
         if not (self.op_ex and self.op_func and self.op_params):
