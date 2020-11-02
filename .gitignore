@@ -60,4 +60,5 @@ Thumbs.db
 # Custom
 /data
 /models
+/source/test_more
 venv/

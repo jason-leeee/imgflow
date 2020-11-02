@@ -6,19 +6,21 @@ from .collection import ImgElement, ImgCollection
 from .operation import ImgInputOp
 
 
-class ImgIOBase(ImgInputOp):
-    def __init__(self):
-        super(ImgIOBase, self).__init__()
+class InputLoader(ImgInputOp):
+    def __init__(self, loader):
+        super(InputLoader, self).__init__()
+        self.loader = loader
+        self.ex = None
+        self.op_func = self.call_loader
+        self.op_params = ()
+
+    def call_loader(self):
+        return self.loader.execute()
 
 
-class ImgPlaceholder(ImgIOBase):
-    def __init__(self):
-        super(ImgPlaceholder, self).__init__()
-
-
-class ImgLoadFromDir(ImgPlaceholder):
+class InputFromDir(ImgInputOp):
     def __init__(self, *args, **kwargs):
-        super(ImgLoadFromDir, self).__init__()
+        super(InputFromDir, self).__init__()
         self.ex = None
         self.op_func = self.load_from_dir
         self.op_params = (args, kwargs)
@@ -31,7 +33,6 @@ class ImgLoadFromDir(ImgPlaceholder):
                 collection.append(ImgElement.fromFile(imgpath))
         return collection
 
-fromDir = ImgLoadFromDir
 
 """
         if recursive:

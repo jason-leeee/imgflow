@@ -5,16 +5,25 @@ import numpy as np
 
 
 class ImgElement:
-    def __init__(self, img, imgpath):
+    def __init__(self, img, imgpath, label=None):
         # TODO: img auto convert to PIL/OpenCV format
         self.img = img
         self.imgpath = imgpath
+        self.label = label
 
     def __repr__(self):
         return self.imgpath
 
     def __str__(self):
         return self.imgpath
+
+    @property
+    def label(self):
+        return self.__label
+
+    @label.setter
+    def label(self, label):
+        self.__label = label
 
     @classmethod
     def fromFile(cls, imgpath):

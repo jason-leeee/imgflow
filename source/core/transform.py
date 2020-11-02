@@ -5,12 +5,7 @@ import PIL.Image
 from .operation import ImgTransformOp
 
 
-class ImgTransformBase(ImgTransformOp):
-    def __init__(self):
-        super(ImgTransformBase, self).__init__()
-
-
-class ImgTransformResize(ImgTransformBase):
+class ImgTransformResize(ImgTransformOp):
     def __init__(self, *args, **kwargs):
         super(ImgTransformResize, self).__init__()
         self.op_func = self.process
@@ -21,6 +16,5 @@ class ImgTransformResize(ImgTransformBase):
         for img in collection:
             print(img)
         return collection
-        
 
-resize = ImgTransformResize
+Resize = ImgTransformResize

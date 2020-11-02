@@ -30,7 +30,8 @@ class ImgInputOp(ImgOperationBase):
         super(ImgInputOp, self).__init__()
 
     def execute(self):
-        if not (self.op_func and self.op_params):
+        if not self.op_func:
             raise ValueError("operation is not defined")
+        if not self.op_params:
+            return self.op_func()
         return self.op_func(*self.op_params[0], **self.op_params[1])
-    
