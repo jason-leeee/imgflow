@@ -17,6 +17,28 @@ class ImgElement:
     def __str__(self):
         return self.imgpath
 
+    def height(self):
+        return self.img.shape[0]
+
+    def width(self):
+        return self.img.shape[1]
+
+    @property
+    def img(self):
+        return self.__img
+
+    @img.setter
+    def img(self, img):
+        self.__img = img
+
+    @property
+    def imgpath(self):
+        return self.__imgpath
+
+    @imgpath.setter
+    def imgpath(self, imgpath):
+        self.__imgpath = imgpath
+
     @property
     def label(self):
         return self.__label

@@ -3,12 +3,12 @@ import os
 import PIL.Image
 
 from .collection import ImgElement, ImgCollection
-from .operation import ImgInputOp
+from .operation import OpInput
 
 
-class InputLoader(ImgInputOp):
+class InputCustomLoader(OpInput):
     def __init__(self, loader):
-        super(InputLoader, self).__init__()
+        super(InputCustomLoader, self).__init__()
         self.loader = loader
         self.ex = None
         self.op_func = self.call_loader
@@ -18,7 +18,7 @@ class InputLoader(ImgInputOp):
         return self.loader.execute()
 
 
-class InputFromDir(ImgInputOp):
+class InputFromDir(OpInput):
     def __init__(self, *args, **kwargs):
         super(InputFromDir, self).__init__()
         self.ex = None

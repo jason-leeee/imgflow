@@ -1,20 +1,22 @@
 import os
 
+import cv2
 import PIL.Image
 
-from .operation import ImgTransformOp
+from .operation import OpOneToOne
 
 
-class ImgTransformResize(ImgTransformOp):
-    def __init__(self, *args, **kwargs):
-        super(ImgTransformResize, self).__init__()
-        self.op_func = self.process
-        self.op_params = (args, kwargs)
+RESIZE_INTERPOLATION = cv2.INTER_AREA
 
-    def process(self, collection, width, height):
-        # TODO: visitor pattern?
-        for img in collection:
-            print(img)
-        return collection
 
+class ImgTransformResize(OpOneToOne):
+    def process(self, img, width, height):
+        print(img)
+        img.img = cv2.resize(img.img, (width, height), interpolation=RESIZE_INTERPOLATION)
+    
 Resize = ImgTransformResize
+
+
+class ImgTransformSplit(OpOneToOne):
+    def process(self, img, vertical, coord):
+        raise NotImplementedError
