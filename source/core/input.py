@@ -12,7 +12,7 @@ class InputCustomLoader(OpInput):
         self.loader = loader
         self.ex = None
         self.op_func = self.call_loader
-        self.op_params = ()
+        self.op_params = ([], {})
 
     def call_loader(self):
         return self.loader.execute()
