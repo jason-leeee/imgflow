@@ -4,12 +4,22 @@ import PIL.Image
 import numpy as np
 
 
+class ImgBBox:
+    def __init__(self, xmin, ymin, xmax, ymax, label):
+        self.xmin = xmin
+        self.ymin = ymin
+        self.xmax = xmax
+        self.ymax = ymax
+        self.label = label
+
+
 class ImgElement:
     def __init__(self, img, imgpath, label=None):
         # TODO: img auto convert to PIL/OpenCV format
         self.img = img
         self.imgpath = imgpath
         self.label = label
+        self.bboxes = []
 
     def __repr__(self):
         return self.imgpath
@@ -22,6 +32,9 @@ class ImgElement:
 
     def width(self):
         return self.img.shape[1]
+
+    def add_bbox(self, xmin, ymin, xmax, ymax, label):
+        self.bboxes.append(ImgBBox(xmin, ymin, xmax, ymax, label))
 
     @property
     def img(self):
