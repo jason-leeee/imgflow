@@ -1,9 +1,13 @@
 from .collection import ImgCollection
 
-
+# TODO: auto-generate operation name
 class OpBase:
+    op_id = 0
+
     def __init__(self, *args, **kwargs):
-        self.op_name = self.__class__.__name__
+        self.op_name = str(self.__class__.op_id) + "_" + self.__class__.__name__
+        OpBase.op_id += 1
+
         self.op_ex = None
         self.op_func = self.process
         self.op_params = (args, kwargs)
@@ -36,6 +40,14 @@ class OpBase:
             raise AttributeError(f"op_params is not defined for {self.op_name}")
 
 
+def op_execution_profile(execute):
+    def wrapper(self):
+        ret = execute(self)
+        print(f"executed operation {self.op_name}")
+        return ret
+    return wrapper
+
+
 class OpInput(OpBase):
     def __init__(self, *args, **kwargs):
         super(OpInput, self).__init__(*args, **kwargs)
@@ -43,22 +55,25 @@ class OpInput(OpBase):
     def __call__(self, ex):
         raise TypeError("OpInput does not accept any inputs")
 
+    @op_execution_profile
     def execute(self):
         self.op_func_check()
         return self.op_func(*self.op_params[0], **self.op_params[1])
 
 
 class OpOutput(OpBase):
+    @op_execution_profile
     def execute(self):
         self.op_ex_check()
         self.op_func_check()
 
         collection = self.op_ex.execute()
         self.op_func(collection, *self.op_params[0], **self.op_params[1])
-        return None
+        return collection
 
 
 class OpOneToOne(OpBase):
+    @op_execution_profile
     def execute(self):
         self.op_ex_check()
         self.op_func_check()
@@ -67,8 +82,8 @@ class OpOneToOne(OpBase):
         if not isinstance(collection, ImgCollection):
             raise TypeError(f"{self.op_name} expects the input type ImgCollection, but got {type(collection)} from {self.op_ex.op_name}")
 
-        for img in collection:
-            self.op_func(img, *self.op_params[0], **self.op_params[1])
+        for imgelem in collection:
+            self.op_func(imgelem, *self.op_params[0], **self.op_params[1])
         return collection
 
 

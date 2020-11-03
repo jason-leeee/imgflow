@@ -15,11 +15,13 @@ class ImgBBox:
 
 class ImgElement:
     def __init__(self, img, imgpath, label=None):
-        # TODO: img auto convert to PIL/OpenCV format
         self.img = img
         self.imgpath = imgpath
         self.label = label
         self.bboxes = []
+
+    def add_bbox(self, xmin, ymin, xmax, ymax, label):
+        self.bboxes.append(ImgBBox(xmin, ymin, xmax, ymax, label))
 
     def __repr__(self):
         return self.imgpath
@@ -27,14 +29,13 @@ class ImgElement:
     def __str__(self):
         return self.imgpath
 
+    @property
     def height(self):
         return self.img.shape[0]
 
+    @property
     def width(self):
         return self.img.shape[1]
-
-    def add_bbox(self, xmin, ymin, xmax, ymax, label):
-        self.bboxes.append(ImgBBox(xmin, ymin, xmax, ymax, label))
 
     @property
     def img(self):
@@ -79,8 +80,13 @@ class ImgCollectionBase:
     def summary(self):
         return f"{self.__class__.__name__} contains {self.__len__()} images"
 
+    def __len__(self):
+        return 0
+
 
 class ImgCollection(ImgCollectionBase):
+    # TODO: auto-generate collection name
+
     def __init__(self):
         super(ImgCollection, self).__init__()
         self.collection = []
