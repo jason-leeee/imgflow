@@ -10,6 +10,10 @@ class OpBase:
 
         self.init(*args, **kwargs)
 
+    def __call__(self, ex):
+        self.op_ex = ex
+        return self
+
     def init(self, *args, **kwargs):
         pass
 
@@ -19,37 +23,49 @@ class OpBase:
     def process(self, *args, **kwargs):
         raise NotImplementedError
 
+    def op_ex_check(self):
+        if not self.op_ex:
+            raise AttributeError(f"op_ex is not defined for {self.op_name}")
+
+    def op_func_check(self):
+        if not self.op_func:
+            raise AttributeError(f"op_func is not defined for {self.op_name}")
+
+    def op_params_check(self):
+        if not self.op_params:
+            raise AttributeError(f"op_params is not defined for {self.op_name}")
+
 
 class OpInput(OpBase):
     def __init__(self, *args, **kwargs):
         super(OpInput, self).__init__(*args, **kwargs)
 
     def __call__(self, ex):
-        raise ValueError("input operations do not accept inputs")
+        raise TypeError("OpInput does not accept any inputs")
 
     def execute(self):
-        if not self.op_func:
-            raise ValueError("operation is not defined")
-        if not self.op_params:
-            return self.op_func()
+        self.op_func_check()
         return self.op_func(*self.op_params[0], **self.op_params[1])
 
 
-class OpOneToOne(OpBase):
-    def __init__(self, *args, **kwargs):
-        super(OpOneToOne, self).__init__(*args, **kwargs)
-
-    def __call__(self, ex):
-        self.op_ex = ex
-        return self
-
+class OpOutput(OpBase):
     def execute(self):
-        if not (self.op_ex and self.op_func and self.op_params):
-            raise ValueError("operation is not defined")
+        self.op_ex_check()
+        self.op_func_check()
+
+        collection = self.op_ex.execute()
+        self.op_func(collection, *self.op_params[0], **self.op_params[1])
+        return None
+
+
+class OpOneToOne(OpBase):
+    def execute(self):
+        self.op_ex_check()
+        self.op_func_check()
 
         collection = self.op_ex.execute()
         if not isinstance(collection, ImgCollection):
-            raise ValueError(f"{self.op_name} expects the input type ImgCollection, but got {type(collection)} from {self.op_ex.op_name}")
+            raise TypeError(f"{self.op_name} expects the input type ImgCollection, but got {type(collection)} from {self.op_ex.op_name}")
 
         for img in collection:
             self.op_func(img, *self.op_params[0], **self.op_params[1])
