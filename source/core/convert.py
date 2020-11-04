@@ -21,8 +21,8 @@ class ImgConvertDetectionTFRecord(OpOneToOne):
                 i += 1
             else:
                 print("no bboxes")
+            yield imgelem
         tfwriter.close()
-        return collection
 
     def create_example(self, id, imgelem, binary_class, all_classes):
         filename = imgelem.imgpath

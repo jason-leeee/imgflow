@@ -28,6 +28,10 @@ class OpBase:
     def execute(self):
         raise NotImplementedError
 
+    def run(self):
+        for _ in self.execute():
+            pass
+
     def process(self, *args, **kwargs):
         raise NotImplementedError
 
@@ -63,7 +67,11 @@ class OpInput(OpBase):
     @op_execution_profile
     def execute(self):
         self.op_func_check()
-        return self.op_func(*self.op_params[0], **self.op_params[1])
+
+        for new_imgelem in self.op_func(*self.op_params[0], **self.op_params[1]):
+            yield new_imgelem
+
+        #return self.op_func(*self.op_params[0], **self.op_params[1])
 
 
 class OpOneToOne(OpBase):
@@ -77,17 +85,18 @@ class OpOneToOne(OpBase):
         self.op_func_check()
 
         collection = self.op_ex.execute()
-        self.data_collection_check(collection)
+        #self.data_collection_check(collection)
 
         if self.process_all:
-            new_collection = self.op_func(copy.deepcopy(collection), *self.op_params[0], **self.op_params[1])
+            collection = self.op_ex.execute()
+            new_collection = self.op_func(collection, *self.op_params[0], **self.op_params[1])
+            for imgelem in new_collection:
+                yield imgelem
         else:
             # TODO: can be paralleled here
-            new_collection = ImgCollection()
             for imgelem in collection:
-                for new_imgelem in self.op_func(copy.deepcopy(imgelem), *self.op_params[0], **self.op_params[1]):
-                    new_collection.append(new_imgelem)
-        return new_collection
+                for new_imgelem in self.op_func(imgelem, *self.op_params[0], **self.op_params[1]):
+                    yield new_imgelem
 
 
 class OpOneToMany(OpBase):

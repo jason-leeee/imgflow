@@ -36,9 +36,9 @@ class ClassificationDatasetLoader(DatasetLoader):
 class CVATDatasetLoader(DatasetLoader):
     def __init__(self, *args, **kwargs):
         super(CVATDatasetLoader, self).__init__(*args, **kwargs)
-        self.max_instances = 200
+        self.max_bboxes = 200
 
-    def load(self, dataset_dir):
+    def load(self, dataset_dir, max_samples=None):
         xmlpath = os.path.join(dataset_dir, "labels.xml")
         data_dir = os.path.join(dataset_dir, "data")
         if not os.path.exists(xmlpath):
@@ -49,7 +49,7 @@ class CVATDatasetLoader(DatasetLoader):
 
         root = ET.parse(xmlpath).getroot()
 
-        coll = ImgCollection()
+        total_images = 0
         for image in root:
             if image.tag == "image":
                 id = int(image.attrib["id"])
@@ -67,20 +67,20 @@ class CVATDatasetLoader(DatasetLoader):
                     y1 = float(box.attrib["ybr"])
                     bboxes.append((label, x0, y0, x1, y1))
 
-                if len(bboxes) > self.max_instances:
-                    print(f"skipping {imgname} with >{self.max_instances} bboxes")
+                if len(bboxes) > self.max_bboxes:
+                    print(f"skipping {imgname} with >{self.max_bboxes} bboxes")
                 elif len(bboxes) == 0:
                     print(f"skipping empty image {imgname}")
                 else:
                     imgpath = os.path.join(data_dir, imgname)
-                    img = ImgElement.fromFile(imgpath)
+                    imgelem = ImgElement.fromFile(imgpath)
                     # TODO: replace loop with a method
-                    for bbox in bboxes:
-                        img.add_bbox(x0, y0, x1, y1, label)
-                    coll.append(img)
+                    for label, x0, y0, x1, y1 in bboxes:
+                        imgelem.add_bbox(x0, y0, x1, y1, label)
+                    total_images += 1
+                    yield imgelem
 
                 # TODO: change it to max_samples argument
-                #if len(coll) > 10:
-                #    break
+                if max_samples and total_images >= max_samples:
+                    break
 
-        return coll

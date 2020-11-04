@@ -33,13 +33,33 @@ class ImgTransformSplitDataset(OpOneToMany):
 
 class ImgTransformExtractBboxes(OpOneToOne):
     def process(self, imgelem: ImgElement):
-        for bbox in imgelem.bboxes:
+        for i, bbox in enumerate(imgelem.bboxes):
             new_imgelem = ImgElement.fromArray(imgelem.img)
             xmin = int(bbox.xmin)
             ymin = int(bbox.ymin)
             xmax = int(bbox.xmax)
             ymax = int(bbox.ymax)
             new_imgelem.img = new_imgelem.img[ymin:ymax, xmin:xmax]
+            oldfilename = os.path.splitext(os.path.basename(imgelem.imgpath))[0]
+            new_imgelem.imgpath = "{}_bbox_{}.jpg".format(oldfilename, i)
             new_imgelem.label = bbox.label
             new_imgelem.bboxes = []
             yield new_imgelem
+
+
+class ImgTransformSave(OpOneToOne):
+    def __init__(self, output_dir, *args, **kwargs):
+        super(ImgTransformSave, self).__init__(output_dir, *args, **kwargs)
+
+        if not os.path.isdir(output_dir):
+            os.makedirs(output_dir)
+
+    def process(self, imgelem, output_dir):
+        if not os.path.isdir(output_dir):
+            os.makedirs(output_dir)
+
+        filename = os.path.basename(imgelem.imgpath)
+        filepath = os.path.join(output_dir, filename)
+        cv2.imwrite(filepath, imgelem.img)
+
+        yield imgelem
