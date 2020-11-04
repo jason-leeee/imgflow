@@ -60,5 +60,6 @@ Thumbs.db
 # Custom
 /data
 /models
+/source/core/special.py
 /source/test_more
 venv/

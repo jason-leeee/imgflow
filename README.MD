@@ -33,6 +33,8 @@ for subset in subsets:
     
 - [ ] Convert ImgFlow into Cloud Dataflow and run in parallel.
 
+- [ ] Cache on local storage.
+
 - [ ] Global config.py.
 
 ### Data loading
@@ -56,6 +58,13 @@ for subset in subsets:
 ### Storage
 - [ ] Save all intermediate results for manual validation.
 - [ ] Export the processed dataset to JSON, MS COCO, PASCAL VOC, TFRecord format.
+
+### Model deployment
+
+- [ ] Serialize/deserialize the pipeline.
+- [ ] Model inference operation.
+- [ ] Flask API integration.
+- [ ] Dockerization.
 
 ### Intelligence
 - [ ] Smart dataset loading, automatically detect the directory hierarchy.

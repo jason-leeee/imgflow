@@ -74,9 +74,13 @@ class CVATDatasetLoader(DatasetLoader):
                 else:
                     imgpath = os.path.join(data_dir, imgname)
                     img = ImgElement.fromFile(imgpath)
-                    img.add_bbox(x0, y0, x1, y1, label)
+                    # TODO: replace loop with a method
+                    for bbox in bboxes:
+                        img.add_bbox(x0, y0, x1, y1, label)
                     coll.append(img)
-                if len(coll) > 10:
-                    break
+
+                # TODO: change it to max_samples argument
+                #if len(coll) > 10:
+                #    break
 
         return coll

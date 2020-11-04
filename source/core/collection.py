@@ -1,5 +1,6 @@
 import os
 import cv2
+import copy
 import PIL.Image
 import numpy as np
 
@@ -61,6 +62,14 @@ class ImgElement:
     def label(self, label):
         self.__label = label
 
+    @property
+    def bboxes(self):
+        return self.__bboxes
+
+    @bboxes.setter
+    def bboxes(self, bboxes):
+        self.__bboxes = bboxes
+
     @classmethod
     def fromFile(cls, imgpath):
         img = cv2.imread(imgpath)
@@ -70,6 +79,11 @@ class ImgElement:
     @classmethod
     def fromPILImage(cls, imgpil):
         img = np.array(imgpil)
+        return cls(img, "")
+
+    @classmethod
+    def fromArray(cls, imgarr):
+        img = copy.deepcopy(imgarr)   # FIXME: use np.copy?
         return cls(img, "")
 
 

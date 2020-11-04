@@ -4,10 +4,13 @@ import hashlib
 import cv2
 import tensorflow as tf
 
-from .operation import OpOutput
+from .operation import OpOneToOne
 
 
-class ImgConvertDetectionTFRecord(OpOutput):
+class ImgConvertDetectionTFRecord(OpOneToOne):
+    def initialized(self):
+        self.process_all = True
+
     def process(self, collection, output_file, binary_class=True, all_classes=[]):
         tfwriter = tf.io.TFRecordWriter(output_file)
         i = 0
@@ -19,6 +22,7 @@ class ImgConvertDetectionTFRecord(OpOutput):
             else:
                 print("no bboxes")
         tfwriter.close()
+        return collection
 
     def create_example(self, id, imgelem, binary_class, all_classes):
         filename = imgelem.imgpath
