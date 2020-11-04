@@ -11,11 +11,11 @@ class ImgConvertDetectionTFRecord(OpOneToOne):
     def initialized(self):
         self.process_all = True
 
-    def process(self, collection, output_file, binary_class=True, all_classes=[]):
+    def process(self, collection, output_file, binary_class=True):
         tfwriter = tf.io.TFRecordWriter(output_file)
         i = 0
         for imgelem in collection:
-            tfexample = self.create_example(i, imgelem, binary_class, all_classes)
+            tfexample = self.create_example(i, imgelem, binary_class)
             if tfexample:
                 tfwriter.write(tfexample.SerializeToString())
                 i += 1
@@ -24,7 +24,7 @@ class ImgConvertDetectionTFRecord(OpOneToOne):
             yield imgelem
         tfwriter.close()
 
-    def create_example(self, id, imgelem, binary_class, all_classes):
+    def create_example(self, id, imgelem, binary_class):
         filename = imgelem.imgpath
         width = imgelem.width
         height = imgelem.height
@@ -45,10 +45,6 @@ class ImgConvertDetectionTFRecord(OpOneToOne):
         difficult_obj = []
 
         for bbox in bboxes:
-            # category filter
-            if all_classes and bbox.label not in all_classes:
-                continue
-
             # dummy attributes
             views.append("Unspecified".encode("utf8"))
             truncated.append(0)

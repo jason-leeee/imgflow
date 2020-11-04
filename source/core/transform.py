@@ -13,8 +13,6 @@ class ImgTransformResize(OpOneToOne):
         # TODO: new_imgelem
         print(imgelem)
         imgelem.img = cv2.resize(imgelem.img, (width, height), interpolation=RESIZE_INTERPOLATION)
-    
-Resize = ImgTransformResize
 
 
 class ImgTransformSlice(OpOneToOne):
