@@ -55,7 +55,7 @@ class OpBase:
 def op_execution_profile(execute):
     def wrapper(self):
         ret = execute(self)
-        print(f"executed operation {self.op_name}")
+        print(f"executing operation {self.op_name}")
         return ret
     return wrapper
 

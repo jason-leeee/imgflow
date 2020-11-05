@@ -14,6 +14,9 @@ class ImgTransformResize(OpOneToOne):
     def process(self, imgelem, width, height):
         new_imgelem = copy.deepcopy(imgelem)
         new_imgelem.img = cv2.resize(new_imgelem.img, (width, height), interpolation=RESIZE_INTERPOLATION)
+
+        #TODO: resize bboxes
+
         yield new_imgelem
 
 
@@ -30,7 +33,8 @@ class ImgTransformScale(OpOneToOne):
         new_imgelem = copy.deepcopy(imgelem)
         new_imgelem.img = cv2.resize(new_imgelem.img, (width_new, height_new), interpolation=cv2.INTER_LINEAR)
         yield new_imgelem
-        
+
+        #TODO: scale bboxes
         #TODO: padding
 
 
