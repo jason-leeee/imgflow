@@ -1,4 +1,6 @@
 import os
+import copy
+
 import cv2
 
 from .collection import ImgElement, ImgBBox
@@ -10,9 +12,26 @@ RESIZE_INTERPOLATION = cv2.INTER_AREA
 
 class ImgTransformResize(OpOneToOne):
     def process(self, imgelem, width, height):
-        # TODO: new_imgelem
-        print(imgelem)
-        imgelem.img = cv2.resize(imgelem.img, (width, height), interpolation=RESIZE_INTERPOLATION)
+        new_imgelem = copy.deepcopy(imgelem)
+        new_imgelem.img = cv2.resize(new_imgelem.img, (width, height), interpolation=RESIZE_INTERPOLATION)
+        yield new_imgelem
+
+
+class ImgTransformScale(OpOneToOne):
+    def process(self, imgelem, width, height):
+        width_src = imgelem.width
+        height_src = imgelem.height
+
+        scale = min(width / width_src, height / height_src)
+
+        width_new = int(width_src * scale)
+        height_new = int(height_src * scale)
+
+        new_imgelem = copy.deepcopy(imgelem)
+        new_imgelem.img = cv2.resize(new_imgelem.img, (width_new, height_new), interpolation=cv2.INTER_LINEAR)
+        yield new_imgelem
+        
+        #TODO: padding
 
 
 class ImgTransformSlice(OpOneToOne):
@@ -30,7 +49,7 @@ class ImgTransformSplitDataset(OpOneToMany):
 
 
 class ImgTransformExtractBboxes(OpOneToOne):
-    def process(self, imgelem: ImgElement):
+    def process(self, imgelem):
         for i, bbox in enumerate(imgelem.bboxes):
             new_imgelem = ImgElement.fromArray(imgelem.img)
             xmin = int(bbox.xmin)
@@ -58,6 +77,7 @@ class ImgTransformSave(OpOneToOne):
 
         filename = os.path.basename(imgelem.imgpath)
         filepath = os.path.join(output_dir, filename)
-        cv2.imwrite(filepath, imgelem.img)
+        img = cv2.cvtColor(imgelem.img, cv2.COLOR_RGB2BGR)
+        cv2.imwrite(filepath, img)
 
         yield imgelem
