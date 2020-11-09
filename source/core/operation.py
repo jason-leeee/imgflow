@@ -1,5 +1,6 @@
 import copy
-
+import math
+from itertools import accumulate
 
 from .collection import ImgCollection
 
@@ -99,19 +100,34 @@ class OpOneToOne(OpBase):
                     yield new_imgelem
 
 
-class OpOneToMany(OpBase):
-    def initialized(self):
-        self.num_outputs = 2
+class OpDispatch(OpBase):
+    def __init__(self, percents):
+        super(OpDispatch, self).__init__(percents)
+        counts = [int(p * 100.0) for p in percents]
+        assert sum(counts) == 100, "the percents must sum up to 1.0"
 
-    # TODO: support multiple output Ops
+        gcd = self.gcd_many(counts)
+        counts = [c // gcd for c in counts]
+        self.cumsum = dict.fromkeys(accumulate(counts), 1)
+        self.total = sum(counts)
+
+    def gcd_many(self, s):
+        g = s[0]
+        for x in s[1:]:
+            g = math.gcd(g, x)
+        return g
+
     def __call__(self, ex):
         self.op_ex = ex
         return self
 
-    class OpOneToManyAux(OpOneToOne):
-        #def initialized(self):
-            #self.process_all = OpOneToMany.process_all
-            #self.op_ex = OpOneToMany.execute[i]: return results[i]
+    @op_execution_profile
+    def execute(self):
+        self.op_ex_check()
 
-        def __call__(self, ex):
-            raise NotImplementedError
+        collection = self.op_ex.execute()
+
+        for i, imgelem in enumerate(collection):
+            if (i % self.total in self.cumsum) or (i == self.total):
+                raise StopIteration
+            yield imgelem

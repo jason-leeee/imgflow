@@ -2,7 +2,7 @@
 
 ## Description
 
-A handy data preprocessing pipeline.
+A handy image preprocessing pipeline.
 
 ## Mock-up
 
