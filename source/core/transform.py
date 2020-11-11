@@ -4,7 +4,7 @@ import copy
 import cv2
 
 from .collection import ImgElement, ImgBBox
-from .operation import OpOneToOne, OpOneToMany
+from .operation import OpOneToOne
 
 
 RESIZE_INTERPOLATION = cv2.INTER_AREA
@@ -43,6 +43,7 @@ class ImgTransformSlice(OpOneToOne):
         raise NotImplementedError
 
 
+"""
 class ImgTransformSplitDataset(OpOneToMany):
     def initialized(self):
         self.process_all = True
@@ -50,6 +51,7 @@ class ImgTransformSplitDataset(OpOneToMany):
 
     def process(self, collection):
         pass
+"""
 
 
 class ImgTransformExtractBboxes(OpOneToOne):

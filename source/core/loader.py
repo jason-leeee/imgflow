@@ -119,3 +119,12 @@ class DetectionResultLoader(OpInput):
 
             if max_samples and total_images >= max_samples:
                 break
+
+
+class LocalDirLoader(OpInput):
+    def process(self, input_dir, image_format):
+        for imgfile in os.listdir(input_dir):
+            if os.path.splitext(imgfile)[-1].lower() in image_format:
+                imgpath = os.path.join(input_dir, imgfile)
+                imgelem = ImgElement.fromFile(imgpath)
+                yield imgelem
